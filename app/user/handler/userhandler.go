@@ -3,6 +3,8 @@ package handler
 import (
 	"module/app/user/repository"
 	"module/domain"
+	"module/domain/dto"
+	"module/middleware"
 	"module/middleware/hash"
 	"net/http"
 
@@ -20,7 +22,7 @@ func NewUserService(dao repository.UserDao) *UserService {
 	}
 }
 func (user *UserService) CreateUser(c *gin.Context) {
-	var tempUser domain.User
+	var tempUser dto.SignUpDto
 	err := c.ShouldBindJSON(&tempUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -29,7 +31,15 @@ func (user *UserService) CreateUser(c *gin.Context) {
 		})
 		return
 	}
-	tempUser.MembershipID, err = uuid.NewRandom()
+	users := domain.User{
+		FirstName: tempUser.FirstName,
+		LastName:  tempUser.LastName,
+		Email:     tempUser.Email,
+		Password:  tempUser.Password,
+		Gender:    tempUser.Gender,
+		BirthDate: tempUser.BirthDate,
+	}
+	users.MembershipID, err = uuid.NewRandom()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  err.Error(),
@@ -46,7 +56,7 @@ func (user *UserService) CreateUser(c *gin.Context) {
 		})
 		return
 	}
-	result := user.dao.CreateUser(tempUser)
+	result := user.dao.CreateUser(users)
 	if result != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  err.Error(),
@@ -55,11 +65,42 @@ func (user *UserService) CreateUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
-		"status": "success",
-		"data":   tempUser,
+		"status": "ok",
+		"data":   users,
 	})
 }
 
 func (user *UserService) Login(c *gin.Context) {
-
+	var tempUser dto.LoginDto
+	err := c.ShouldBindJSON(&tempUser)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  err.Error(),
+			"success": false,
+		})
+		return
+	}
+	users, err := user.dao.GetByEmail(tempUser.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  err.Error(),
+			"success": false,
+		})
+		return
+	}
+	if users.Password == tempUser.Password {
+		token, err := middleware.GenerateToken(*users)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"status":  err.Error(),
+				"success": false,
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status": "ok",
+			"data":   *users,
+			"token":  token,
+		})
+	}
 }
