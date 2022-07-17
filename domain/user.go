@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"module/domain/enum"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,9 +14,10 @@ type User struct {
 	Email        string
 	PhoneNumber  string
 	MembershipID uuid.UUID
-	Gender       enum.Gender
+	Gender       string
 	BirthDate    time.Time
 	Password     string
+	Picture      []byte
 }
 
 type Address struct {

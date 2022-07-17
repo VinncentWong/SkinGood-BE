@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	"module/config"
-	"module/util"
+	"module/domain"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -10,11 +10,19 @@ import (
 
 var db *gorm.DB
 
-func ConnectDb() {
+func ConnectDb() error {
 	_db, err := gorm.Open(postgres.Open(config.GetDsn()), &gorm.Config{})
 	if err != nil {
-		util.HandleError(err)
+		return err
 	}
 	db = _db
-	err = db.AutoMigrate()
+	err = db.AutoMigrate(&domain.User{}, &domain.Address{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetDb() *gorm.DB {
+	return db
 }
