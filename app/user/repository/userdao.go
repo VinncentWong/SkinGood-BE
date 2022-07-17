@@ -1,10 +1,23 @@
 package repository
 
-import "github.com/gin-gonic/gin"
+import (
+	"module/domain"
 
-type UserDao interface {
-	CreateUser(c *gin.Context)
-	UpdateUser(c *gin.Context)
-	GetUser(c *gin.Context)
-	DeleteUser(c *gin.Context)
+	"gorm.io/gorm"
+)
+
+type UserDao struct {
+	db *gorm.DB
+}
+
+func NewUserDao() *UserDao {
+	return &UserDao{}
+}
+
+func (dao *UserDao) CreateUser(user domain.User) error {
+	err := dao.db.Create(&user)
+	if err != nil {
+		return err.Error
+	}
+	return nil
 }

@@ -1,7 +1,8 @@
 package main
 
 import (
-	"module/app/user/implementation"
+	"module/app/user/handler"
+	"module/app/user/repository"
 	"module/config"
 	"module/infrastructure"
 	"module/rest"
@@ -14,11 +15,15 @@ func main() {
 	config.InitEnv()
 
 	// Database Connection
-	infrastructure.ConnectDb()
-	implementation.InitDb()
+	err := infrastructure.ConnectDb()
+	if err != nil {
+		panic(err.Error())
+	}
 
+	userRepository := repository.NewUserDao()
+	userHandler := handler.NewUserService(*userRepository)
 	// Running App
 	r := gin.Default()
-	rest.InitUserRoutes(r)
+	rest.InitUserRoutes(r, userHandler)
 	r.Run()
 }
