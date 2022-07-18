@@ -7,6 +7,7 @@ import (
 	"module/infrastructure"
 	"module/rest"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +26,13 @@ func main() {
 	userHandler := handler.NewUserService(*userRepository)
 	// Running App
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowHeaders:     []string{"*"},
+		AllowMethods:     []string{"*"},
+		AllowCredentials: true,
+	}))
+
 	rest.CheckHealth(r)
 	rest.InitUserRoutes(r, userHandler)
 	r.Run(":8000")
