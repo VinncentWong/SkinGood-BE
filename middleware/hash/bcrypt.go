@@ -3,7 +3,7 @@ package hash
 import "golang.org/x/crypto/bcrypt"
 
 func GenerateHashedContent(rawPassword string) (*string, error) {
-	bytePassword, err := bcrypt.GenerateFromPassword([]byte(rawPassword), bcrypt.MaxCost)
+	bytePassword, err := bcrypt.GenerateFromPassword([]byte(rawPassword), bcrypt.MinCost)
 	if err != nil {
 		return nil, err
 	}

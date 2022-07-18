@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+
 	// Load Env
 	config.InitEnv()
 
@@ -24,6 +25,7 @@ func main() {
 	userHandler := handler.NewUserService(*userRepository)
 	// Running App
 	r := gin.Default()
+	rest.CheckHealth(r)
 	rest.InitUserRoutes(r, userHandler)
-	r.Run()
+	r.Run(":8000")
 }

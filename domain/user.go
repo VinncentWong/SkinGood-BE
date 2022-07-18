@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -15,7 +13,7 @@ type User struct {
 	PhoneNumber  string
 	MembershipID uuid.UUID
 	Gender       string
-	BirthDate    time.Time
+	BirthDate    string
 	Password     string
 	Picture      []byte
 }

@@ -88,6 +88,13 @@ func (user *UserService) Login(c *gin.Context) {
 		})
 		return
 	}
+	if users == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "user doesn't exist",
+			"success": false,
+		})
+		return
+	}
 	if users.Password == tempUser.Password {
 		token, err := middleware.GenerateToken(*users)
 		if err != nil {

@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"fmt"
 	"module/domain"
+	"module/infrastructure"
 
 	"gorm.io/gorm"
 )
@@ -11,10 +13,13 @@ type UserDao struct {
 }
 
 func NewUserDao() *UserDao {
-	return &UserDao{}
+	return &UserDao{
+		db: infrastructure.GetDb(),
+	}
 }
 
 func (conn *UserDao) CreateUser(user domain.User) error {
+	fmt.Println("create-user-dao")
 	err := conn.db.Create(&user)
 	if err != nil {
 		return err.Error
@@ -25,7 +30,7 @@ func (conn *UserDao) CreateUser(user domain.User) error {
 func (conn *UserDao) GetByEmail(email string) (*domain.User, error) {
 	var user domain.User
 	err := conn.db.Where("email = ?", email).Take(&user)
-	if err != nil {
+	if err.Error != nil {
 		return nil, err.Error
 	}
 	return &user, nil
