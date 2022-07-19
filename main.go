@@ -27,10 +27,10 @@ func main() {
 	// Running App
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowAllOrigins:  true,
+		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowHeaders:     []string{"*"},
 		AllowMethods:     []string{"*"},
-		AllowCredentials: true,
+		AllowCredentials: false,
 	}))
 
 	rest.CheckHealth(r)

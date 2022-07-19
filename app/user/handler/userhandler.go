@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"module/app/user/repository"
 	"module/domain"
 	"module/domain/dto"
@@ -22,6 +23,7 @@ func NewUserService(dao repository.UserDao) *UserService {
 	}
 }
 func (user *UserService) CreateUser(c *gin.Context) {
+	fmt.Println("Create user dipanggil")
 	var tempUser dto.SignUpDto
 	err := c.ShouldBindJSON(&tempUser)
 	if err != nil {
@@ -95,7 +97,7 @@ func (user *UserService) Login(c *gin.Context) {
 		})
 		return
 	}
-	if users.Password == tempUser.Password {
+	if hash.CompareContent(tempUser.Password, users.Password) == nil {
 		token, err := middleware.GenerateToken(*users)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
@@ -109,5 +111,11 @@ func (user *UserService) Login(c *gin.Context) {
 			"data":   *users,
 			"token":  token,
 		})
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status":  "user doesn't exist",
+			"success": false,
+		})
+		return
 	}
 }
