@@ -50,7 +50,7 @@ func (user *UserService) CreateUser(c *gin.Context) {
 		return
 	}
 	password, err := hash.GenerateHashedContent(tempUser.Password)
-	tempUser.Password = *password
+	users.Password = *password
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  err.Error(),
