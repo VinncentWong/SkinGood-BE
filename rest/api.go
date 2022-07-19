@@ -19,4 +19,6 @@ func InitUserRoutes(router *gin.Engine, handler *handler.UserService) {
 	rGroup := router.Group("/user")
 	rGroup.POST("/registration", handler.CreateUser)
 	rGroup.POST("/login", handler.Login)
+	rGroup.GET("/login-w-google", handler.LoginWithGoogle)
+	rGroup.GET("/callback", handler.GetGoogleDetails)
 }
