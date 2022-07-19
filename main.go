@@ -29,7 +29,7 @@ func main() {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{"*"},
-		AllowMethods: []string{"*"},
+		AllowMethods: []string{"POST", "GET", "PUT", "PATCH", "DELETE", "OPTIONS"},
 	}))
 
 	rest.CheckHealth(r)
