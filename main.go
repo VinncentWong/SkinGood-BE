@@ -24,7 +24,8 @@ func main() {
 	userRepository := repository.NewUserDao()
 	userHandler := handler.NewUserService(*userRepository)
 	// Running App
-	r := gin.Default()
+	r := gin.New()
+	r.Use(gin.Recovery())
 	r.Use(CorsMiddleware())
 
 	rest.CheckHealth(r)
@@ -43,7 +44,6 @@ func CorsMiddleware() gin.HandlerFunc {
 			c.AbortWithStatus(204)
 			return
 		}
-
 		c.Next()
 	}
 }
